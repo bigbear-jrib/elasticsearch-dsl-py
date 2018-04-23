@@ -84,6 +84,21 @@ def test_bool_and_other_appends_other_to_must():
     assert q is not qb
     assert q.must[0] == q1
 
+def test_and_sets_appropriate_minimum_should_match():
+    q1 = query.Q('bool', should=[
+        query.Q('term', name='aaa')],
+        minimum_should_match=1
+    )
+    q2 = query.Q('bool', should=[
+        query.Q('term', name='bbb')],
+        minimum_should_match=1
+    )
+
+    q = q1 & q2
+    assert q == query.Bool(
+        must=[query.Q('term', name='aaa'), query.Q('term', name='bbb')]
+    )
+
 def test_bool_and_other_sets_min_should_match_if_needed():
     q1 = query.Q('term', category=1)
     q2 = query.Q('bool', should=[
